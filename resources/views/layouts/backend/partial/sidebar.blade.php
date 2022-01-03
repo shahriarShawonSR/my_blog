@@ -54,6 +54,14 @@ use Illuminate\Support\Facades\Auth;
                     </a>
                 </li>
                 {{-- ./ Tag menu --}}
+                {{-- / Category menu --}}
+                <li class="{{ Request::is('admin/category*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.category.index') }}">
+                        <i class="material-icons">apps</i>
+                        <span>Category</span>
+                    </a>
+                </li>
+                {{-- ./ Category menu --}}
                 <li class="header">System</li>
                 <li>
                     <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
