@@ -30,7 +30,8 @@
 
                                 <div class="col-md-6">
 
-                                    <input id="email" type="email" class="form-control" name="email" required>
+                                    <input id="email" type="email" class="form-control" name="email" required
+                                    placeholder="Enter Your Mail">
                                     @if ($errors->has('email'))
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $errors->first('email') }}</strong>
