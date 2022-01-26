@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Author;
 
-use App\Category;
+use App\Tag;
 use App\Post;
+use App\Category;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Tag;
-use Brian2694\Toastr\Facades\Toastr;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\File;
+use Brian2694\Toastr\Facades\Toastr;
+use Carbon\Carbon;
 
 class PostController extends Controller
 {
@@ -23,8 +24,10 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::latest()->get();
-        return view('admin.post.index', compact('posts'));
+        // $posts = Auth::user()->posts()->latest()->get();
+        // $users = User::where('id', auth()->user()->id)->with('posts')->get();
+        $posts = Post::where('user_id', auth()->user()->id)->latest()->get();
+        return view('author.post.index', compact('posts'));
     }
 
     /**
@@ -36,7 +39,7 @@ class PostController extends Controller
     {
         $categories = Category::all();
         $tags = Tag::all();
-        return view('admin.post.create', compact('categories', 'tags'));
+        return view('author.post.create', compact('categories', 'tags'));
     }
 
     /**
@@ -66,11 +69,11 @@ class PostController extends Controller
             $currentDate = Carbon::now()->toDateString();
             $imageName = $slug . '-' . $currentDate . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
 
-            if(!Storage::disk('public')->exists('post')){
+            if (!Storage::disk('public')->exists('post')) {
                 Storage::disk('public')->makeDirectory('post');
             }
             $postImage = Image::make($image)->resize(1600, 1066)->stream();
-            Storage::disk('public')->put('post/'.$imageName,$postImage);
+            Storage::disk('public')->put('post/' . $imageName, $postImage);
             // $postImage->save($path . $imageName);
             // File::move->put('post/' . $imageName, $postImage);
         } else {
@@ -89,14 +92,14 @@ class PostController extends Controller
         } else {
             $post->status = false;
         }
-        $post->is_approved = true;
+        $post->is_approved = false;
         $post->save();
 
         $post->categories()->attach($request->categories);
         $post->tags()->attach($request->tags);
 
         Toastr::success('Post Successfully Saved :)', 'Success');
-        return redirect()->route('admin.post.index');
+        return redirect()->route('author.post.index');
     }
 
     /**
@@ -107,7 +110,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return view('admin.post.show', compact('post'));
+        return view('author.post.show', compact('post'));
     }
 
     /**
@@ -120,7 +123,7 @@ class PostController extends Controller
     {
         $categories = Category::all();
         $tags = Tag::all();
-        return view('admin.post.edit', compact('post', 'categories', 'tags'));
+        return view('author.post.edit', compact('post', 'categories', 'tags'));
     }
 
     /**
@@ -184,14 +187,14 @@ class PostController extends Controller
         } else {
             $post->status = false;
         }
-        $post->is_approved = true;
+        $post->is_approved = false;
         $post->save();
 
         $post->categories()->sync($request->categories);
         $post->tags()->sync($request->tags);
 
         Toastr::success('Post Successfully Updated :)', 'Success');
-        return redirect()->route('admin.post.index');
+        return redirect()->route('author.post.index');
     }
 
     /**
