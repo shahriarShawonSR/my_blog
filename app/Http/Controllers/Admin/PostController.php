@@ -6,6 +6,7 @@ use App\Category;
 use App\Post;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Notifications\AuthorPostApprove;
 use App\Tag;
 use Brian2694\Toastr\Facades\Toastr;
 use Carbon\Carbon;
@@ -66,11 +67,11 @@ class PostController extends Controller
             $currentDate = Carbon::now()->toDateString();
             $imageName = $slug . '-' . $currentDate . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
 
-            if(!Storage::disk('public')->exists('post')){
+            if (!Storage::disk('public')->exists('post')) {
                 Storage::disk('public')->makeDirectory('post');
             }
             $postImage = Image::make($image)->resize(1600, 1066)->stream();
-            Storage::disk('public')->put('post/'.$imageName,$postImage);
+            Storage::disk('public')->put('post/' . $imageName, $postImage);
             // $postImage->save($path . $imageName);
             // File::move->put('post/' . $imageName, $postImage);
         } else {
@@ -167,7 +168,6 @@ class PostController extends Controller
             // }
             // delete old image new code
 
-
             $postImage = Image::make($image)->resize(1600, 1066)->stream();
             Storage::disk('public')->put('post/' . $imageName, $postImage);
         } else {
@@ -193,7 +193,25 @@ class PostController extends Controller
         Toastr::success('Post Successfully Updated :)', 'Success');
         return redirect()->route('admin.post.index');
     }
+    public function pending()
+    {
+        $posts = Post::where('is_approved', false)->get();
+        return view('admin.post.pending', compact('posts'));
+    }
 
+    public function approval($id)
+    {
+        $post = Post::find($id);
+        if ($post->is_approved == false) {
+            $post->is_approved = true;
+            $post->save();
+            // $post->user->notify(new AuthorPostApprove($post));
+            Toastr::success('Post Successfully Approved :)', 'Success');
+        } else {
+            Toastr::success('This Post is already Approved :)', 'Info');
+        }
+        return redirect()->back();
+    }
     /**
      * Remove the specified resource from storage.
      *

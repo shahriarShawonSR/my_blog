@@ -15,7 +15,7 @@
 
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
 
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" />
     <!-- Stylesheets -->
 
     <link href="{{ asset('assets/frontend/css/bootstrap.css') }}" rel="stylesheet">
@@ -23,9 +23,8 @@
     <link href="{{ asset('assets/frontend/css/swiper.css') }}" rel="stylesheet">
 
     <link href="{{ asset('assets/frontend/css/ionicons.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
-    {{-- toastr --}}
-    <link rel="stylesheet" href="https://cdn.bootcss.com/toastr.js/latest/css/toastr.min.css">
 
     @stack('css')
 
@@ -45,12 +44,24 @@
 
     <script src="{{ asset('assets/frontend/js/bootstrap.js') }}"></script>
 
+    <script src="{{ asset('assets/frontend/js/swiper.js') }}"></script>
+
     <script src="{{ asset('assets/frontend/js/scripts.js') }}"></script>
 
     {{-- Toastr --}}
     {{-- <script src="http://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script> --}}
     <script src="https://cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"></script>
     {!! Toastr::message() !!}
+    <script>
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                toastr.error('{{ $error }}','Error',{
+                closeButton:true,
+                progressBar:true,
+                });
+            @endforeach
+        @endif
+    </script>
     @stack('js')
 </body>
 

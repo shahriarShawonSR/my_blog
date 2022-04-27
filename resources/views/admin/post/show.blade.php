@@ -10,14 +10,24 @@
     <div class="container-fluid">
         <!-- Vertical Layout | Title,Image,Status -->
         <a href="{{ route('admin.post.index') }}" class="btn btn-danger waves-effect">BACK</a>
-
-
-            <button type="button" class="btn btn-success pull-right" {{$post->status == 1 ? 'disabled' : ''}}>
+        @if ($post->is_approved == false)
+            <button type="button" class="btn btn-success waves-effect pull-right" onclick="approvePost({{ $post->id }})">
                 <i class="material-icons">done</i>
-                <span>{{$post->status == 1 ? 'Approved' : 'Approve'}}</span>
+                <span>Approve</span>
             </button>
-
-        <br> <br>
+            <form method="post" action="{{ route('admin.post.approve', $post->id) }}" id="approval-form"
+                style="display: none">
+                @csrf
+                @method('PUT')
+            </form>
+        @else
+            <button type="button" class="btn btn-success pull-right" disabled>
+                <i class="material-icons">done</i>
+                <span>Approved</span>
+            </button>
+        @endif
+        <br>
+        <br>
         <div class="row clearfix">
             <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
                 <div class="card">
@@ -71,8 +81,7 @@
                     </div>
                     <div class="body">
 
-                        <img class="img-responsive thumbnail"
-                            src="{{ '/storage/post/' . $post->image }}" alt="">
+                        <img class="img-responsive thumbnail" src="{{ '/storage/post/' . $post->image }}" alt="">
                     </div>
                 </div>
                 {{-- ./ Image Post --}}
@@ -87,6 +96,9 @@
     <script src="{{ asset('assets/backend/plugins/bootstrap-select/js/bootstrap-select.js') }}"></script>
     <!-- TinyMCE -->
     <script src="{{ asset('assets/backend/plugins/tinymce/tinymce.js') }}"></script>
+
+    {{-- //sweetalert2 --}}
+    <script src="https://unpkg.com/sweetalert2@7.19.1/dist/sweetalert2.all.js"></script>
 
     <script>
         $(function() {
@@ -108,5 +120,37 @@
             tinymce.suffix = ".min";
             tinyMCE.baseURL = '{{ asset('assets/backend/plugins/tinymce') }}';
         });
+        //  sweetalert2
+        function approvePost(id) {
+            swal({
+                title: 'Are you sure?',
+                text: "You want to approve this post !",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, approve it!',
+                cancelButtonText: 'No, cancel!',
+                confirmButtonClass: 'btn btn-success',
+                cancelButtonClass: 'btn btn-danger',
+                buttonsStyling: false,
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    event.preventDefault();
+                    document.getElementById('approval-form').submit();
+                    console.log(id);
+                } else if (
+                    // Read more about handling dismissals
+                    result.dismiss === swal.DismissReason.cancel
+                ) {
+                    swal(
+                        'Cancelled',
+                        'Your post remain pending :)',
+                        'info'
+                    )
+                }
+            })
+        }
     </script>
 @endpush

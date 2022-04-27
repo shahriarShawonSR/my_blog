@@ -3,7 +3,7 @@ use Illuminate\Support\Facades\Auth;
     <!-- User Info -->
     <div class="user-info">
         <div class="image">
-            <img src="{{ asset('assets/backend/images/user.png') }}" width="48" height="48" alt="User" />
+            <img src="{{ Storage::disk('public')->url('profile/' .Auth::user()->image) }}" width="48" height="48" alt="User" />
         </div>
         <div class="info-container">
             <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -14,7 +14,12 @@ use Illuminate\Support\Facades\Auth;
                 <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"
                     style="color:blue;">keyboard_arrow_down</i>
                 <ul class="dropdown-menu pull-right">
-                    <li><a href="javascript:void(0);"><i class="material-icons">person</i>Profile</a></li>
+                    <li>
+                        <a href="{{ Auth::user()->role->id == 1 ?
+                        route('admin.settings') : route('author.settings') }}">
+                            <i class="material-icons">settings</i>Settings
+                        </a>
+                    </li>
                     <li role="separator" class="divider"></li>
 
                     <li role="separator" class="divider"></li>
@@ -70,7 +75,55 @@ use Illuminate\Support\Facades\Auth;
                     </a>
                 </li>
                 {{-- ./ Post menu --}}
+                {{-- / Pending menu --}}
+                <li class="{{ Request::is('admin/pending/post') ? 'active' : '' }}">
+                    <a href="{{ route('admin.post.pending') }}">
+                        <i class="material-icons">library_books</i>
+                        <span>Pending Posts</span>
+                    </a>
+                </li>
+                {{-- ./ Pending menu --}}
+                {{-- / Favorite menu --}}
+                <li class="{{ Request::is('admin/favorite') ? 'active' : '' }}">
+                    <a href="{{ route('admin.favorite.index') }}">
+                        <i class="material-icons">favorite</i>
+                        <span>Favorite Posts</span>
+                    </a>
+                </li>
+                {{-- ./ Favorite menu --}}
+                {{-- / Comments menu --}}
+                <li class="{{ Request::is('admin/comments') ? 'active' : '' }}">
+                    <a href="{{ route('admin.comment.index') }}">
+                        <i class="material-icons">comment</i>
+                        <span>Comments</span>
+                    </a>
+                </li>
+                {{-- ./ Comments menu --}}
+                {{-- / Authors  menu --}}
+                <li class="{{ Request::is('admin/authors') ? 'active' : '' }}">
+                    <a href="{{ route('admin.author.index') }}">
+                        <i class="material-icons">account_circle</i>
+                        <span>Authors</span>
+                    </a>
+                </li>
+                {{-- ./ Authors  menu --}}
+                {{-- / Subscriber  menu --}}
+                <li class="{{ Request::is('admin/subscriber') ? 'active' : '' }}">
+                    <a href="{{ route('admin.subscriber.index') }}">
+                        <i class="material-icons">subscriptions</i>
+                        <span>Subscribers</span>
+                    </a>
+                </li>
+                {{-- ./ Subscriber  menu --}}
                 <li class="header">System</li>
+                {{-- / Settings menu --}}
+                <li class="{{ Request::is('admin/settings') ? 'active' : '' }}">
+                    <a href="{{ route('admin.settings') }}">
+                        <i class="material-icons">settings</i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                {{-- ./ Settings menu --}}
                 <li>
                     <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                         document.getElementById('logout-form').submit();">
@@ -99,7 +152,31 @@ use Illuminate\Support\Facades\Auth;
                     </a>
                 </li>
                 {{-- ./ Tag menu --}}
+                {{-- / Favorite menu --}}
+                <li class="{{ Request::is('author/favorite') ? 'active' : '' }}">
+                    <a href="{{ route('author.favorite.index') }}">
+                        <i class="material-icons">favorite</i>
+                        <span>Favorite Posts</span>
+                    </a>
+                </li>
+                {{-- ./ Favorite menu --}}
+                {{-- / Comments menu --}}
+                <li class="{{ Request::is('author/comments') ? 'active' : '' }}">
+                    <a href="{{ route('author.comment.index') }}">
+                        <i class="material-icons">comment</i>
+                        <span>Comments</span>
+                    </a>
+                </li>
+                {{-- ./ Comments menu --}}
                 <li class="header">System</li>
+                 {{-- / Settings menu --}}
+                 <li class="{{ Request::is('author/settings') ? 'active' : '' }}">
+                    <a href="{{ route('author.settings') }}">
+                        <i class="material-icons">settings</i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                {{-- ./ Settings menu --}}
                 <li>
                     <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();
                         document.getElementById('logout-form').submit();">

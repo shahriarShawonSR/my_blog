@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Post;
 
 class User extends Authenticatable
 {
@@ -15,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'role_id', 'name', 'username', 'email', 'password',
     ];
 
     /**
@@ -33,5 +34,17 @@ class User extends Authenticatable
     public function posts()
     {
         return $this->hasMany('App\Post'); // ModelName of related model
+    }
+    public function favoritePosts()
+    {
+        return $this->belongsToMany('App\Post')->withTimestamps();
+    }
+    public function comments()
+    {
+        return $this->hasMany('App\Comment');
+    }
+    public function scopeAuthors($query)
+    {
+        return $query->where('role_id', 2);
     }
 }
